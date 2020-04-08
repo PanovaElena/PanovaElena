@@ -25,11 +25,11 @@ public:
     }
 
     // insertion O(n)
-    iterator insertWithoutSearch(KeyType&& key, ElemType&& elem) {
+    iterator insertWithoutSearch(const KeyType& key, ElemType&& elem) {
         auto it = storage.begin();
         for (; it != storage.end() && it->first < key; ++it);
         auto insertedIter = storage.insert(it,
-            std::make_pair(std::move(key), std::move(elem)));  // here we are moving key and elem
+            std::make_pair(key, std::move(elem)));  // here we are moving key and elem
         return insertedIter;
     }
 

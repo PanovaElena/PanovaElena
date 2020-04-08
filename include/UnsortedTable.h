@@ -19,8 +19,8 @@ public:
     }
 
     // insertion O(1)
-    iterator insertWithoutSearch(KeyType&& key, ElemType&& elem) {
-        storage.push_back(std::make_pair(std::move(key), std::move(elem)));  // here we are moving key and elem
+    iterator insertWithoutSearch(const KeyType& key, ElemType&& elem) {
+        storage.push_back(std::make_pair(key, std::move(elem)));  // here we are moving key and elem
         return storage.end() - 1;
     }
 

@@ -104,12 +104,12 @@ public:
     }
 
     // insertion O(1) on the average
-    iterator insertWithoutSearch(KeyType&& key, ElemType&& elem) {
+    iterator insertWithoutSearch(const KeyType& key, ElemType&& elem) {
         // if table is almost full then repack
         if (size + 1 > size_t(MAX_FILL_FACTOR * storage.size()))
             repack();
         uint32_t hashValue = hash(key);
-        storage[hashValue].push_front(std::make_pair(std::move(key), std::move(elem)));
+        storage[hashValue].push_front(std::make_pair(key, std::move(elem)));
         size++;
         return iterator(storage, hashValue, storage[hashValue].begin());
     }
@@ -278,7 +278,7 @@ public:
 
     // insertion O(1) on the average
     // we consider that deleted elements are not in the table
-    iterator insertWithoutSearch(KeyType&& key, ElemType&& elem) {
+    iterator insertWithoutSearch(const KeyType& key, ElemType&& elem) {
         // if table is almost full then repack
         if (size + 1 > size_t(MAX_FILL_FACTOR * storage.size()))
             repack();
@@ -294,11 +294,11 @@ public:
         // if all table was looked through and empty cell was not found
         if (i == storage.size()) {
             repack();
-            return this->insertWithoutSearch(std::move(key), std::move(elem));
+            return this->insertWithoutSearch(key, std::move(elem));
         }
         // if empty cell was found
         size++;
-        storage[cell] = std::make_pair(std::make_pair(std::move(key), std::move(elem)),
+        storage[cell] = std::make_pair(std::make_pair(key, std::move(elem)),
             HashTableOpenAddressingCellLabel(true, false));
         return iterator(storage, cell);
     }

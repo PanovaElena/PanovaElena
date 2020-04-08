@@ -31,30 +31,33 @@ public:
 
     // insert by copying the element
     std::pair<iterator, bool> insert(const KeyType& key, const ElemType& elem) {
-        KeyType keyCopy = key;     // here we are copying key
-        ElemType elemCopy = elem;  // here we are copying elem
+        ElemType copy = elem;  // here we are copying elem
         // here we are moving copied elem and key
         // std::pair<iterator, bool> insert(KeyType&& key, ElemType&& elem) will be called
-
-        // here we called insert function of derived class
-        // so we imitated virtual behavior without keyword "virtual"
-        return this->insert(std::move(keyCopy), std::move(elemCopy));
+        return this->insert(key, std::move(copy));
     }
 
     // more advanced function, move semantics
     // insert by moving the element
-    std::pair<iterator, bool> insert(KeyType&& key, ElemType&& elem) {
+    std::pair<iterator, bool> insert(const KeyType& key, ElemType&& elem) {
         DerivedType* der = static_cast<DerivedType*>(this);
-        iterator searchRes = der->find(key);
+        iterator searchRes = der->find(key);  // here we called insert function of derived class
+                                              // so we imitated virtual behavior without keyword "virtual"
         if (searchRes != end())  // if elem was found
             return std::make_pair(searchRes, false);
-        return std::make_pair(der->insertWithoutSearch(std::move(key), std::move(elem)), true);
+        return std::make_pair(der->insertWithoutSearch(key, std::move(elem)), true);
+    }
+
+    // insert without search
+    iterator insertWithoutSearch(const KeyType& key, const ElemType& elem) {
+        ElemType copy = elem;
+        return this->insertWithoutSearch(key, std::move(copy));
     }
      
     // insert without search
     // move semantics
-    iterator insertWithoutSearch(KeyType&& key, ElemType&& elem) {
-        return static_cast<DerivedType*>(this)->insertWithoutSearch(std::move(key), std::move(elem));
+    iterator insertWithoutSearch(const KeyType& key, ElemType&& elem) {
+        return static_cast<DerivedType*>(this)->insertWithoutSearch(key, std::move(elem));
     }
 
     // erase by key
